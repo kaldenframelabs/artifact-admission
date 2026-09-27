@@ -16,6 +16,11 @@ Exit codes:
   2  invalid invocation or unexpected runtime failure`;
 }
 
+function safeErrorMessage(error) {
+  if (error && typeof error.code === "string") return `filesystem operation failed (${error.code})`;
+  return String(error?.message || error);
+}
+
 function parseVerifyArgs(args) {
   const parsed = { policy: null, root: null, output: null, compact: false };
   const valueFlags = new Map([["--policy", "policy"], ["--root", "root"], ["--output", "output"]]);
@@ -82,6 +87,6 @@ async function main() {
 main().then((code) => {
   process.exitCode = code;
 }).catch((error) => {
-  process.stderr.write(`artifact-admission: ${error.message || error}\n\n${usage()}\n`);
+  process.stderr.write(`artifact-admission: ${safeErrorMessage(error)}\n\n${usage()}\n`);
   process.exitCode = 2;
 });

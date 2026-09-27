@@ -378,6 +378,11 @@ test("CLI rejects unknown and duplicate flags with exit 2", async (t) => {
   const duplicate = spawnSync(process.execPath, [cli, "verify", "--policy", fixture.policyPath, "--policy", fixture.policyPath, "--root", fixture.root], { cwd, encoding: "utf8" });
   assert.equal(duplicate.status, 2);
   assert.match(duplicate.stderr, /only once/);
+  const missingPolicy = join(fixture.base, "private", "missing-policy.json");
+  const missing = spawnSync(process.execPath, [cli, "verify", "--policy", missingPolicy, "--root", fixture.root], { cwd, encoding: "utf8" });
+  assert.equal(missing.status, 2);
+  assert.match(missing.stderr, /filesystem operation failed \(ENOENT\)/);
+  assert.equal(missing.stderr.includes(fixture.base), false);
 });
 
 test("CLI writes a complete decision atomically without leaving temp files", async (t) => {
