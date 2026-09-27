@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaldenframelabs.com/schemas/artifact-admission-policy-v1.schema.json",
+  "title": "Artifact Admission Policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "policy_id", "policy_version", "admission_stage", "receipt_kind", "subject", "receipt_directory", "allowed_states", "max_receipt_age_hours", "allowed_verifiers", "deny_if_paths_exist", "required_evidence"],
+  "properties": {
+    "schema": { "const": "kaldenframe.artifact-admission.policy.v1" },
+    "policy_id": { "$ref": "#/$defs/id" },
+    "policy_version": { "$ref": "#/$defs/id" },
+    "admission_stage": { "$ref": "#/$defs/id" },
+    "receipt_kind": { "$ref": "#/$defs/id" },
+    "subject": { "$ref": "#/$defs/fileDigest" },
+    "receipt_directory": { "$ref": "#/$defs/path" },
+    "allowed_states": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/id" } },
+    "max_receipt_age_hours": { "type": "number", "exclusiveMinimum": 0, "maximum": 8760 },
+    "allowed_verifiers": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/verifier" } },
+    "deny_if_paths_exist": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/path" } },
+    "required_evidence": { "type": "array", "items": { "$ref": "#/$defs/fileDigest" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "path": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*//)(?!.*[:\\\\])[^\\u0000-\\u001f\\u007f]+$", "description": "Portable forward-slash relative path. Runtime validation additionally rejects platform-reserved names and trailing spaces or dots." },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "source_sha256"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/id" },
+        "source_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "fileDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": { "path": { "$ref": "#/$defs/path" }, "sha256": { "$ref": "#/$defs/sha256" } }
+    }
+  }
+}

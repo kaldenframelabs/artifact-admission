@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaldenframelabs.com/schemas/artifact-admission-receipt-v1.schema.json",
+  "title": "Artifact Admission Receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "receipt_id", "policy_id", "policy_version", "admission_stage", "receipt_kind", "state", "subject", "verified_at", "verifier", "evidence"],
+  "properties": {
+    "schema": { "const": "kaldenframe.artifact-admission.receipt.v1" },
+    "receipt_id": { "$ref": "#/$defs/id" },
+    "policy_id": { "$ref": "#/$defs/id" },
+    "policy_version": { "$ref": "#/$defs/id" },
+    "admission_stage": { "$ref": "#/$defs/id" },
+    "receipt_kind": { "$ref": "#/$defs/id" },
+    "state": { "$ref": "#/$defs/id" },
+    "subject": { "$ref": "#/$defs/fileDigest" },
+    "verified_at": { "type": "string", "format": "date-time" },
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/id" },
+        "source_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "evidence": { "type": "array", "items": { "$ref": "#/$defs/fileDigest" } }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "path": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?(?:/|$))(?!.*//)(?!.*[:\\\\])[^\\u0000-\\u001f\\u007f]+$", "description": "Portable forward-slash relative path. Runtime validation additionally rejects platform-reserved names and trailing spaces or dots." },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "fileDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": { "path": { "$ref": "#/$defs/path" }, "sha256": { "$ref": "#/$defs/sha256" } }
+    }
+  }
+}

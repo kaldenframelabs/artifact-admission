@@ -1,0 +1,52 @@
+{
+  "name": "@kaldenframe-labs/artifact-admission",
+  "version": "0.1.0",
+  "description": "Fail-closed local policy gate for hash-bound implementation artifacts and verification receipts.",
+  "type": "module",
+  "bin": {
+    "artifact-admission": "./src/cli.mjs"
+  },
+  "exports": {
+    ".": "./src/gate.mjs",
+    "./policy-schema": "./schemas/policy-v1.schema.json",
+    "./receipt-schema": "./schemas/receipt-v1.schema.json",
+    "./decision-schema": "./schemas/decision-v1.schema.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "schemas",
+    "examples",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "homepage": "https://kaldenframelabs.com/products/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaldenframelabs/artifact-admission.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kaldenframelabs/artifact-admission/issues"
+  },
+  "keywords": [
+    "artifact",
+    "admission",
+    "policy",
+    "provenance",
+    "receipt",
+    "verification",
+    "ci"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "npm test",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "UNLICENSED"
+}

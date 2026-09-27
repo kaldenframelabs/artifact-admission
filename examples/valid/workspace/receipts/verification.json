@@ -1,0 +1,25 @@
+{
+  "schema": "kaldenframe.artifact-admission.receipt.v1",
+  "receipt_id": "synthetic-verification-001",
+  "policy_id": "synthetic-release",
+  "policy_version": "1",
+  "admission_stage": "reviewed",
+  "receipt_kind": "independent-verification",
+  "state": "PASSED",
+  "subject": {
+    "path": "dist/application.txt",
+    "sha256": "a3265c34d8de22cf383a9d46e8f08be96913c9e86c7df06b410790a5f232750d"
+  },
+  "verified_at": "2026-09-27T18:10:00Z",
+  "verifier": {
+    "name": "synthetic-verifier",
+    "version": "1.0.0",
+    "source_sha256": "f071f572413c5004ebb4fe3fa346f9fe73857f21c31e97aa0b91b3bd3167e43f"
+  },
+  "evidence": [
+    {
+      "path": "reports/verification.json",
+      "sha256": "ea81a7253840815ab8619b7beab6d8d5a529a07178e20775ecbec8789c9e2dcb"
+    }
+  ]
+}
