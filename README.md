@@ -38,13 +38,13 @@ node examples/valid/synthetic-verifier.mjs \
 
 The command exits `0` only for `ADMIT`, `1` for a policy denial, and `2` for invalid invocation or an unexpected runtime failure.
 
-Install the exact v0.1.0 GitHub release package in another local project:
+Install the exact v0.1.1 first-party release package in another local project:
 
 ```sh
-npm install https://github.com/kaldenframelabs/artifact-admission/releases/download/v0.1.0/kaldenframe-labs-artifact-admission-0.1.0.tgz
+npm install https://kaldenframelabs.com/downloads/kaldenframe-labs-artifact-admission-0.1.1.tgz
 ```
 
-This direct GitHub path does not claim npm-registry availability.
+This direct package path does not claim npm-registry availability. GitHub may be added as a source and release mirror.
 
 Calculate a SHA-256 digest for policy preparation:
 
@@ -96,4 +96,4 @@ The library and CLI perform no network requests. They read the policy and worksp
 
 See [SECURITY.md](SECURITY.md) for the vulnerability-reporting contact and testing boundary.
 
-© 2026 KaldenFrame Labs. All rights reserved. Publication does not change the product boundary described above.
+Licensed under the [MIT License](LICENSE). Publication does not change the product boundary described above.

@@ -4,7 +4,7 @@ import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { evaluateAdmission, loadPolicy, sha256File, validatePolicy } from "./gate.mjs";
 
 function usage() {
-  return `Artifact Admission 0.1.0
+  return `Artifact Admission 0.1.1
 
 Usage:
   artifact-admission verify --policy <policy.json> --root <workspace> [--output <decision.json>] [--compact]
