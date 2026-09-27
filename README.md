@@ -58,6 +58,8 @@ Write an admission decision atomically:
 node src/cli.mjs verify --policy policy.json --root workspace --output decisions/release.json
 ```
 
+Output is create-only. The CLI refuses to overwrite an existing path or write into the configured receipt directory, policy, subject, required evidence, or deny-marker paths.
+
 ## Fail-closed checks
 
 1. Policy schema and portable identifiers are valid.

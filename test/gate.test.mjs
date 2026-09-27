@@ -394,6 +394,19 @@ test("CLI writes a complete decision atomically without leaving temp files", asy
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(await readFile(output, "utf8")).decision, "ADMIT");
   assert.deepEqual((await readdir(join(fixture.base, "nested"))).filter((name) => name.includes(".tmp-")), []);
+
+  const overwrite = spawnSync(process.execPath, [cli, "verify", "--policy", fixture.policyPath, "--root", fixture.root, "--output", output], { cwd, encoding: "utf8" });
+  assert.equal(overwrite.status, 2);
+  assert.match(overwrite.stderr, /filesystem operation failed \(EEXIST\)/);
+  assert.equal(JSON.parse(await readFile(output, "utf8")).decision, "ADMIT");
+
+  const receiptOutput = spawnSync(process.execPath, [cli, "verify", "--policy", fixture.policyPath, "--root", fixture.root, "--output", join(fixture.receiptDirectory, "decision.json")], { cwd, encoding: "utf8" });
+  assert.equal(receiptOutput.status, 2);
+  assert.match(receiptOutput.stderr, /must not be inside the configured receipt directory/);
+
+  const subjectOutput = spawnSync(process.execPath, [cli, "verify", "--policy", fixture.policyPath, "--root", fixture.root, "--output", fixture.subjectPath], { cwd, encoding: "utf8" });
+  assert.equal(subjectOutput.status, 2);
+  assert.match(subjectOutput.stderr, /must not overlap/);
 });
 
 test("CLI hash matches the library digest", async (t) => {

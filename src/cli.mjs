@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { mkdir, rename, rm, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { evaluateAdmission, loadPolicy, sha256File } from "./gate.mjs";
+import { link, lstat, mkdir, rm, writeFile } from "node:fs/promises";
+import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
+import { evaluateAdmission, loadPolicy, sha256File, validatePolicy } from "./gate.mjs";
 
 function usage() {
   return `Artifact Admission 0.1.0
@@ -48,13 +48,43 @@ function parseVerifyArgs(args) {
 async function writeAtomic(path, text) {
   const target = resolve(path);
   await mkdir(dirname(target), { recursive: true });
+  try {
+    await lstat(target);
+    const error = new Error("output path already exists");
+    error.code = "EEXIST";
+    throw error;
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+  }
   const temporary = `${target}.tmp-${process.pid}`;
   try {
     await writeFile(temporary, text, { encoding: "utf8", flag: "wx" });
-    await rename(temporary, target);
+    await link(temporary, target);
+    await rm(temporary);
   } catch (error) {
     await rm(temporary, { force: true });
     throw error;
+  }
+}
+
+function pathIsWithin(parent, candidate) {
+  const rel = relative(parent, candidate);
+  return rel === "" || (!rel.startsWith(`..${sep}`) && rel !== ".." && !isAbsolute(rel));
+}
+
+function validateOutputPath(output, policyPath, root, policy) {
+  const target = resolve(output);
+  const protectedFiles = [
+    resolve(policyPath),
+    resolve(root, policy.subject.path),
+    ...policy.required_evidence.map((item) => resolve(root, item.path)),
+    ...policy.deny_if_paths_exist.map((item) => resolve(root, item))
+  ];
+  if (protectedFiles.some((path) => relative(path, target) === "")) {
+    throw new Error("--output must not overlap the policy, subject, evidence, or deny-marker paths");
+  }
+  if (pathIsWithin(resolve(root, policy.receipt_directory), target)) {
+    throw new Error("--output must not be inside the configured receipt directory");
   }
 }
 
@@ -77,6 +107,7 @@ async function main() {
   if (!policyPath || !root) throw new Error("verify requires --policy and --root");
 
   const policy = await loadPolicy(resolve(policyPath));
+  if (output && validatePolicy(policy).length === 0) validateOutputPath(output, policyPath, root, policy);
   const decision = await evaluateAdmission({ root: resolve(root), policy });
   const text = `${JSON.stringify(decision, null, compact ? 0 : 2)}\n`;
   if (output) await writeAtomic(output, text);
